@@ -16,7 +16,7 @@ link = https://edtechquestionandanswerchatbot.streamlit.app/
 
 ## 🌐 Project Overview
 
-Codebasics (e‑learning platform for data courses) receives thousands of learner questions via email and Discord. Their human team uses an internal FAQ sheet to respond.
+Edtech Q&A (e‑learning platform for data courses) receives thousands of learner questions via email and Discord. Their human team uses an internal FAQ sheet to respond.
 
 This project builds an **LLM‑powered Q&A system** that:
 
@@ -113,22 +113,14 @@ EdTech_question_and_answer_chatbot/
 
 ## 🖼️ Screenshots
 
-You can add screenshots in this section after capturing them from your running app.
-
-```markdown
 ### Home Screen
-<img width="1407" height="870" alt="tc2" src="https://github.com/user-attachments/assets/c45c2b5a-37b8-49b8-84d0-1cb1eba5c766" />
+<img width="1745" height="846" alt="home2" src="https://github.com/user-attachments/assets/f1811e11-a52c-4276-ade4-8fb717be3009" />
+
+
 ### Example Answer
-<img width="1715" height="866" alt="tc1" src="https://github.com/user-attachments/assets/c384268d-5f28-4f7c-9641-106b61ec4ca8" />
-<img width="1745" height="846" alt="home2" src="https://github.com/user-attachments/assets/dced2148-bcbf-43ba-8fd4-79b36fa53be4" />
+<img width="1715" height="866" alt="tc1" src="https://github.com/user-attachments/assets/6b931d91-ac04-4080-8760-84f828faf99b" />
 
-
-
-
-
-
-
-```
+<img width="1407" height="870" alt="tc2" src="https://github.com/user-attachments/assets/fb7cc5ca-62ff-4285-86a2-b82570f52404" />
 
 
 
