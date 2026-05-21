@@ -1,38 +1,23 @@
 import os
-from dotenv import load_dotenv
-
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.vectorstores import FAISS
 from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.prompts import PromptTemplate
-from langchain_classic.chains import RetrievalQA 
+from langchain_classic.chains import RetrievalQA  # classic RetrievalQA
+from dotenv import load_dotenv
 
-# Load environment variables from .env
+# Optional: load .env so GOOGLE_API_KEY can be used as a fallback
 load_dotenv()
 
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-if not GOOGLE_API_KEY:
-    raise ValueError("GOOGLE_API_KEY not set in .env")
-
-# 1. Gemini LLM (using gemini-3.5-flash, which you confirmed works)
-llm = ChatGoogleGenerativeAI(
-    model="gemini-3.5-flash",
-    google_api_key=GOOGLE_API_KEY,
-    temperature=0.1,
-)
-
-# 2. Embeddings (modern Hugging Face integration)
-embeddings = HuggingFaceEmbeddings(
-    model_name="hkunlp/instructor-large"
-)
-
-# 3. Local FAISS index path
+# Shared embeddings and FAISS index path
+embeddings = HuggingFaceEmbeddings(model_name="hkunlp/instructor-large")
 vectordb_file_path = "faiss_index"
 
+
 def create_vector_db():
-    """Load CSV and build FAISS index, then save it locally."""
-    # Adjust this path if your CSV is somewhere else
+    """Load CSV FAQs and build a FAISS index, then save it locally."""
+    # Adjust if your CSV path is different
     csv_path = os.path.join("dataset", "codebasics_faqs.csv")
     if not os.path.exists(csv_path):
         raise FileNotFoundError(f"CSV file not found at: {csv_path}")
@@ -40,7 +25,7 @@ def create_vector_db():
     loader = CSVLoader(
         file_path=csv_path,
         source_column="prompt",
-        encoding="latin-1",  # keep if needed for special characters
+        encoding="latin-1",
     )
     data = loader.load()
 
@@ -52,9 +37,22 @@ def create_vector_db():
     vectordb.save_local(vectordb_file_path)
 
 
-def get_qa_chain():
-    """Load FAISS index from disk and return a RetrievalQA chain."""
-    # allow_dangerous_deserialization is required for load_local in newer LangChain
+def get_qa_chain(google_api_key: str | None = None):
+    """
+    Build and return a RetrievalQA chain.
+
+    Priority for API key:
+    1. Explicit google_api_key argument (e.g., from Streamlit sidebar)
+    2. GOOGLE_API_KEY from environment / .env
+    """
+    if not google_api_key:
+        google_api_key = os.getenv("GOOGLE_API_KEY", "")
+
+    if not google_api_key:
+        raise ValueError("Google API key not provided. "
+                         "Pass it to get_qa_chain() or set GOOGLE_API_KEY in environment/.env.")
+
+    # Load FAISS index
     vectordb = FAISS.load_local(
         vectordb_file_path,
         embeddings,
@@ -79,6 +77,12 @@ QUESTION: {question}"""
         input_variables=["context", "question"],
     )
 
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-3.5-flash",
+        google_api_key=google_api_key,
+        temperature=0.1,
+    )
+
     chain = RetrievalQA.from_chain_type(
         llm=llm,
         chain_type="stuff",
@@ -92,7 +96,7 @@ QUESTION: {question}"""
 
 
 if __name__ == "__main__":
-    # Quick manual test
+    # Manual test (uses GOOGLE_API_KEY from .env if google_api_key not passed)
     create_vector_db()
     chain = get_qa_chain()
     print(chain("Do you have javascript course?"))

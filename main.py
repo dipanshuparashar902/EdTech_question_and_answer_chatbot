@@ -9,11 +9,9 @@ st.set_page_config(
     layout="wide",
 )
 
-# ---------- Theme toggle (simple) ----------
-# Let the user choose theme; we apply inline CSS based on selection.
+# ---------- Theme toggle ----------
 theme = st.sidebar.radio("Theme", ["Light", "Dark"], index=0)
 
-# ---------- Custom CSS for both themes ----------
 light_css = """
 <style>
     body {
@@ -190,6 +188,20 @@ if theme == "Light":
 else:
     st.markdown(dark_css, unsafe_allow_html=True)
 
+# ---------- API key input (sidebar) ----------
+if "google_api_key" not in st.session_state:
+    st.session_state.google_api_key = ""
+
+st.sidebar.subheader("API Key")
+st.session_state.google_api_key = st.sidebar.text_input(
+    "Google API Key",
+    type="password",
+    help="Paste your Gemini API key. It is used only for this session. "
+         "If left empty, the app will try GOOGLE_API_KEY from environment/.env.",
+)
+
+api_key = st.session_state.google_api_key
+
 # ---------- Main card ----------
 st.markdown('<div class="app-card">', unsafe_allow_html=True)
 
@@ -226,11 +238,16 @@ question = st.text_input("Ask your question here 👇")
 
 # ---------- Answer section ----------
 if question:
-    if not index_exists:
+    # Resolve API key: prefer sidebar, fallback to env
+    effective_api_key = api_key or os.getenv("GOOGLE_API_KEY", "")
+
+    if not effective_api_key:
+        st.warning("Please provide a Google API key in the sidebar or set GOOGLE_API_KEY in your environment.")
+    elif not index_exists:
         st.warning("Please create the knowledgebase first by clicking the button above.")
     else:
         with st.spinner("Thinking with Gemini..."):
-            chain = get_qa_chain()
+            chain = get_qa_chain(effective_api_key)
             response = chain(question)
 
         st.markdown('<div class="answer-box">', unsafe_allow_html=True)
