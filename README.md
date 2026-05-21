@@ -11,7 +11,7 @@ A question–answer assistant for an e‑learning company (Codebasics‑style) b
 Learners ask questions about courses/bootcamps, and the app answers them using a curated FAQ CSV instead of hitting support email or Discord every time.
 
 > Note: The original tutorial used Google PaLM; this project upgrades it to Gemini and the latest modular LangChain stack.
-
+link = https://edtechquestionandanswerchatbot.streamlit.app/
 ---
 
 ## 🌐 Project Overview
@@ -117,15 +117,20 @@ You can add screenshots in this section after capturing them from your running a
 
 ```markdown
 ### Home Screen
-
-
-
+<img width="1407" height="870" alt="tc2" src="https://github.com/user-attachments/assets/c45c2b5a-37b8-49b8-84d0-1cb1eba5c766" />
 ### Example Answer
+<img width="1715" height="866" alt="tc1" src="https://github.com/user-attachments/assets/c384268d-5f28-4f7c-9641-106b61ec4ca8" />
+<img width="1745" height="846" alt="home2" src="https://github.com/user-attachments/assets/dced2148-bcbf-43ba-8fd4-79b36fa53be4" />
+
+
+
+
+
 
 
 ```
 
-Create an `images/` folder and add your PNG/JPG files there (and reference them as shown).
+
 
 ---
 
@@ -240,7 +245,6 @@ These correspond to actual entries in the FAQ CSV and demonstrate how the system
 
 - Add conversation history (chat-style interface)
 - Support multiple FAQ CSVs (per course / product)
-- Optional dark mode toggle
 - Dockerization for easier deployment
 
 ---
